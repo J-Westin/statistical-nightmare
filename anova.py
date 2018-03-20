@@ -15,12 +15,12 @@ def S_minmax(Y, indices, bit):
     N = len(Y)
     n = n_params(Y)
     S = 0.
-
+    
     for k in range(N):
         bitstring = bin_fixed_length(k, n)
         if not bit in [int(bitstring[i]) for i in indices]:
             S += Y[k]
-
+    
     return S
 
 def S_low(Y, indices):
@@ -33,20 +33,21 @@ def S_i(Y, indices):
     factor = 1. / len(Y)
     return factor * ((S_high(Y, indices) - S_low(Y, indices))**2. )
 
+def P_i(Y, indices, percent=False):
+    if percent: factor = 100.
+    else: factor = 1.
+    return factor * S_i(Y, indices)/S_T(Y)
+
 def ANOVA_partial(Y, order, display=False):
     index_inputs = all_choices(range(5), order)
-    interaction_set = []
-    ST = S_T(Y)
-    
-    for indices in index_inputs:
-        interaction_set.append(S_i(Y, indices)/ST)
+    interaction_set = [P_i(Y, indices) for indices in index_inputs]
 
     if display:
         pct = [round(S*100., 2) for S in interaction_set]
         for i in range(len(pct)):
             P_name = " P_"
             for index in index_inputs[i]:
-                P_name = P_name + str(index)
+                P_name = P_name + str(index+1)
             print P_name, "=", pct[i], "%"
         print
 
@@ -80,5 +81,7 @@ def ANOVA_full(Y, display=False):
 
     return index_inputs, interaction_set
 
-def S_E(Y):
-    return S_T(Y) - sum(ANOVA_full(Y, display=False)[1])
+def S_E(Y, percent=True):
+    error = 1. - sum(ANOVA_full(Y, display=False)[1])
+    if percent: return error*100.
+    else: return error

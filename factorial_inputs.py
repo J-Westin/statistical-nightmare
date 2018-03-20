@@ -1,4 +1,5 @@
 import numpy as np
+from math import log
 
 def bin_fixed_length(n, length):
     """
@@ -12,6 +13,19 @@ def bin_fixed_length(n, length):
         nb = "0" + nb
 
     return nb
+
+def bin_to_plusminus(bitstring):
+    """
+    Converts a string of bits (e.g. "01011") to a string of comma-separated
+    plusses and minuses (e.g. "-,+,-,+,+").
+    """
+    s = ""
+    for bit in list(bitstring):
+        if int(bit):
+            s = s + "+,"
+        else:
+            s = s + "-,"
+    return s[:-1]
 
 def generate_inputs(minmax_settings, bitstring):
     """
@@ -46,3 +60,29 @@ def evaluate_factorial_design(minmax_inputs, y):
         outputs.append( y(inputs) )
 
     return np.array(outputs)
+
+def dollar(string):
+    return "$" + string + "$"
+
+def latex_output_table(Y):
+    N = len(Y)
+    n = int(round(log(N, 2)))
+
+    line = ""
+    line_columns = 0
+    
+    for k in range(N):
+        inputs = dollar(bin_to_plusminus(bin_fixed_length(k, n)))
+        output = dollar(str(round(Y[k], 2)))
+
+        line = line + inputs + " & " + output + " & "
+        line_columns += 1
+
+        if line_columns == 4:
+            print line[:-3] + "\\\\"
+            line = ""
+            line_columns = 0
+
+    return
+            
+        
