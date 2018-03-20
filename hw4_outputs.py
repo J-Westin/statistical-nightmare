@@ -28,7 +28,9 @@ if asmt == 3:
 
 out_y1       = evaluate_factorial_design(param_limits, y1)
 latex_output_table(out_y1)
-
+print
+latex_interaction_table(out_y1)
+print
 ##print P_i(out_y1, [0,1])
 
 ##out_y2       = evaluate_factorial_design(param_limits, y2)

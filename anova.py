@@ -1,7 +1,7 @@
 import numpy as np
 from math import log
 
-from factorial_inputs import bin_fixed_length
+from factorial_inputs import bin_fixed_length, dollar
 from y_functions import all_choices
 
 def n_params(Y):
@@ -53,8 +53,31 @@ def ANOVA_partial(Y, order, display=False):
 
     return index_inputs, interaction_set
 
+
+
+    
+
 def interaction_contribution(Y, order):
     return sum(ANOVA_partial(Y, order, display=False)[1])
+
+##def latex_interaction_line(Y, order):
+##    n = n_params(Y)
+##    line = dollar(str(order)) + " & "
+##    for indices in all_choices(range(n), order):
+##        name = "P_{"
+##        for index in indices:
+##            name = name + str(index+1)
+##        P = str(round(P_i(Y, indices, percent=True), 2))
+##        line = line + dollar(name + "} = " + P + " \\%") + " & "
+##
+##    line = line + dollar(str(round(interaction_contribution(Y, order)*100., 2)) + " \\%")
+##    line = line + " \\\\"
+##    return line
+##
+##def latex_interaction_table(Y):
+##    n = n_params(Y)
+##    for order in range(1, n+1):
+##        print latex_interaction_line(Y, order)
 
 def contribution_summary(Y, max_order=-1, display=True):
     if max_order == -1:
@@ -85,3 +108,43 @@ def S_E(Y, percent=True):
     error = 1. - sum(ANOVA_full(Y, display=False)[1])
     if percent: return error*100.
     else: return error
+
+def latex_interaction(Y, indices, percent=True):
+    name = "P_{"
+    for i in indices:
+        name = name + str(i+1)
+    name = name + "}"
+    value = P_i(Y, indices, percent=percent)
+    if percent:
+        bonus = "\\ \\%"
+    else:
+        bonus = ""
+    
+    return dollar(name + " = " + str(round(value, 2)) + bonus)
+
+def latex_interaction_table(Y):
+    n = n_params(Y)
+    orders = range(1, n+1)
+    index_city = [all_choices(range(n), order) for order in orders]
+    longest = max([len(indices) for indices in index_city])
+
+    for i in range(longest):
+        line = " & "
+        for order in orders:
+            try:
+                indices = index_city[order-1][i]
+                line = line + latex_interaction(Y, indices, percent=True) + " & "
+            except IndexError:
+                line = line + "$-$ & "
+        print line[:-3] + "\\\\"
+
+    print "\\hline"
+    last_line = "Total & "
+
+    for order in orders:
+        contribution = interaction_contribution(Y, order)*100.
+        last_line = last_line + dollar(str(round(contribution, 2)) + "\\ \\%") + " & "
+
+    print last_line[:-3] + "\\\\"
+    
+    return
