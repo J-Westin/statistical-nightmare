@@ -60,25 +60,6 @@ def ANOVA_partial(Y, order, display=False):
 def interaction_contribution(Y, order):
     return sum(ANOVA_partial(Y, order, display=False)[1])
 
-##def latex_interaction_line(Y, order):
-##    n = n_params(Y)
-##    line = dollar(str(order)) + " & "
-##    for indices in all_choices(range(n), order):
-##        name = "P_{"
-##        for index in indices:
-##            name = name + str(index+1)
-##        P = str(round(P_i(Y, indices, percent=True), 2))
-##        line = line + dollar(name + "} = " + P + " \\%") + " & "
-##
-##    line = line + dollar(str(round(interaction_contribution(Y, order)*100., 2)) + " \\%")
-##    line = line + " \\\\"
-##    return line
-##
-##def latex_interaction_table(Y):
-##    n = n_params(Y)
-##    for order in range(1, n+1):
-##        print latex_interaction_line(Y, order)
-
 def contribution_summary(Y, max_order=-1, display=True):
     if max_order == -1:
         max_order = n_params(Y)
