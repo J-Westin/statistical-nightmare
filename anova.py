@@ -103,17 +103,23 @@ def latex_interaction(Y, indices, percent=True):
     
     return dollar(name + " = " + str(round(value, 2)) + bonus)
 
-def latex_interaction_table(Y):
+def latex_interaction_table(Y, max_order=-1):
     n = n_params(Y)
     orders = range(1, n+1)
-    index_city = [all_choices(range(n), order) for order in orders]
+
+    if max_order == -1:
+        columns = orders
+    else:
+        columns = range(1, max_order+1)
+    
+    index_city = [all_choices(range(n), column) for column in columns]
     longest = max([len(indices) for indices in index_city])
 
     for i in range(longest):
         line = " & "
-        for order in orders:
+        for column in columns:
             try:
-                indices = index_city[order-1][i]
+                indices = index_city[column-1][i]
                 line = line + latex_interaction(Y, indices, percent=True) + " & "
             except IndexError:
                 line = line + "$-$ & "
@@ -122,8 +128,8 @@ def latex_interaction_table(Y):
     print "\\hline"
     last_line = "Total & "
 
-    for order in orders:
-        contribution = interaction_contribution(Y, order)*100.
+    for column in columns:
+        contribution = interaction_contribution(Y, column)*100.
         last_line = last_line + dollar(str(round(contribution, 2)) + "\\ \\%") + " & "
 
     print last_line[:-3] + "\\\\"

@@ -1,9 +1,11 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 from assignment_number import asmt
 from factorial_inputs import *
 from anova import *
 from y_functions import y1, y2, y2_noisy
+from gradient_lines import *
 
 if asmt == 1:
     param_limits = [[-2.5,  2.0],
@@ -31,19 +33,34 @@ latex_output_table(out_y1)
 print
 latex_interaction_table(out_y1)
 print
-##print P_i(out_y1, [0,1])
 
-##out_y2       = evaluate_factorial_design(param_limits, y2)
-##out_y2_noisy = evaluate_factorial_design(param_limits, y2_noisy)
+out_y2       = evaluate_factorial_design(param_limits, y2)
+latex_output_table(out_y2)
+print
+latex_interaction_table(out_y2, max_order=2)
+print
 
-##print P_i(out_y1, [0, 1])
+plt.subplot(121)
+plt.title("Linear Terms")
+for indices in all_choices(range(5), 1):
+    plot_normalized_gradient(out_y2, indices)
+plt.xlabel("<-- x_min      x_max -->")
+plt.ylabel("Average $S_i^-$ and $S_i^+$")
 
-##cnt_y1 = contribution_summary(out_y1)
-##ANOVA_full(out_y1, display=True)
-##print "Total Error:", round(S_E(out_y1), 2), "%"
-##all_indices, interactions       = ANOVA_full(out_y1)
-##var_y2       = ANOVA_full(out_y2)
-##var_y2_noisy = ANOVA_full(out_y2_noisy)
-##print factorial_input_set(param_limits)
+plt.subplot(122)
+plt.title("Two-Term Interactions")
+term_legend(2)
+for indices in all_choices(range(5), 2):
+    plot_normalized_gradient(out_y2, indices)
+plt.xlabel("<-- x_min      x_max -->")
+plt.ylabel("Average $S_{ij}^-$ and $S_{ij}^+$")
 
-dummy = raw_input("Press ENTER")
+plt.show()
+
+out_y2_noisy = evaluate_factorial_design(param_limits, y2_noisy)
+latex_output_table(out_y2_noisy)
+print
+latex_interaction_table(out_y2_noisy, max_order=2)
+
+
+##dummy = raw_input("Press ENTER")
