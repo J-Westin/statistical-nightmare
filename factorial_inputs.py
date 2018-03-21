@@ -1,5 +1,6 @@
 import numpy as np
 from math import log
+from random import random
 
 def bin_fixed_length(n, length):
     """
@@ -60,6 +61,16 @@ def evaluate_factorial_design(minmax_inputs, y):
         outputs.append( y(inputs) )
 
     return np.array(outputs)
+
+def random_input(bounds):
+    dif = bounds[1] - bounds[0]
+    return bounds[0] + dif*random()
+
+def random_inputs(minmax_settings):
+    return [random_input(bounds) for bounds in minmax_settings]
+
+def random_input_set(minmax_settings, number):
+    return np.array([random_inputs(minmax_settings) for n in range(number)])
 
 def dollar(string):
     return "$" + string + "$"
