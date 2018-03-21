@@ -1,0 +1,1 @@
+Outputs for the assignment, including LaTeX-formatted tables and one figure, are generated using "hw4_outputs.py". To generate a specific output, uncomment the relevant snippet of code and run the script.
